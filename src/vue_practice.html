@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="vue.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<!-- 视图 v-once 只渲染一次-->
+		<div id="hi">
+			<test></test>
+			<button-counter title="我是标题" @clicknow="myFunction"></button-counter>
+
+			{{sayHi}} {{msg}}
+
+
+			<!-- 模版语法 -->
+			<p v-html="myHtml"></p>
+			
+			<!-- v-bind:属性="" 【可简写为 :】 -->
+			<div v-bind:class="myClass">test...</div>
+			<!-- 动态绑定 class -->
+			<div v-bind:class="{myClass2 : isActive}">test2...</div>
+			<div v-bind:class="[isActive ? 'myClass3' : 'myClass2']">test3...</div>
+			<!-- 动态绑定 -->
+			<div :style="{ color:myColor, fontSize: mySize }">test4</div>
+
+			<!-- js 表达式 -->
+			<p>{{ number + 5}}</p>
+			<p>{{ ok ? '对' : '错'}}</p>
+			<p>{{ word.split('').reverse().join('') }}</p>
+
+			<!-- 指令 -->
+			<!-- v-bind 绑定属性 -->
+			<a v-bind:href="url">百度</a>
+			<!-- 指令修饰符 .stop 事件不传递-->
+			<div @click="click1">
+				<div @click.stop="click2">点击</div>
+			</div>
+
+			<!-- 条件渲染 -->
+			<p v-if="see">可见</p>
+			<p v-show="see">display(block or none): {{see}}</p>
+
+			<!-- 列表渲染 绑定 key 要求 key 有唯一性 -->
+			<p v-for="item,index in myArray" :key="index">{{ index+1 }} : {{ item }}</p>
+			<p v-for="value, key in user" :key="key">{{key}} : {{value}}</p>
+
+			<!-- v-on 事件绑定 【可简写为 @】; $event 表示事件信息-->
+			<button @click="great('单', $event)">点击次数：{{counter}}</button>
+			<button @dblclick="great1('双', $event)">双击次数：{{counter1}}</button>
+
+			<!-- v-model 表单输入绑定 -->
+			<input v-model="text" placeholder="请输入..." />
+			<p>{{ text }}</p>
+			<button type="button" @click="submit">提交</button>
+
+		</div>
+
+		<style>
+			.blue{
+				color: blue;
+				font-size: 50px;
+				}
+			.myClass2{color: aqua;}
+			.myClass3{color: rosybrown;}
+		</style>
+
+
+
+		<!-- 脚本 -->
+		<script type="text/javascript">
+			// 组件命名方式有两种 一、短横线分隔 二、大驼峰命名
+			Vue.component('button-counter', {
+				props: ["title"],
+				data: function() {
+					return {
+						count: 0
+					}
+				},
+				template: '<button v-on:click="clickAdd">我的按钮组件 -> {{title}} : {{count}}</button>',
+				methods: {
+					clickAdd: function() {
+						this.count++;
+						//$emit()方法触发另外一个clicknow()事件,携带count参数
+						this.$emit('clicknow', this.count)
+					}
+				}
+
+			});
+
+
+			var myData = {
+				sayHi: "Hi..",
+				msg: "pig",
+				myHtml: "<span style='color:red'>红色</span>",
+				myClass: "blue",
+				isActive: true,
+				number: 5,
+				ok: true,
+				word: "abc",
+				see: true,
+				url: "https://www.baidu.com/",
+				myColor: 'red',
+				mySize: '60px',
+				myArray: [
+					'春',
+					'眠',
+					'不',
+					'觉',
+					'晓'
+				],
+				user: {
+					id: 1,
+					name: "Jason",
+					age: 18
+				},
+				counter: 0,
+				counter1: 0,
+				text: "默认值"
+			};
+			// Object.freeze(data)
+			// vue 实例
+			var vm = new Vue({
+				// vue 属性
+				el: "#hi",
+				data: myData,
+				methods: {
+					click1: function() {
+						console.log("click1...")
+					},
+					click2: function() {
+						console.log("click2...")
+					},
+					great: function(str, e) {
+						vm.counter++
+						console.log(vm.counter + str)
+						console.log(e)
+					},
+					great1: function(str, e) {
+						vm.counter1++
+						console.log(vm.counter1 + str)
+						console.log(e)
+					},
+					submit: function() {
+						console.log(this.text)
+						var obj = {
+							text: this.text
+						}
+						console.log(obj)
+					},
+					myFunction: function(e) {
+						console.log(e)
+					}
+				},
+				// 组件的局部注册
+				components:{
+					test: {
+						template: '<h1>大标题</h1>'
+					}
+				}
+
+				// 生命周期函数
+				// beforeCreate: function() {
+				// 	console.log("beforeCreate")
+				// },
+				// created: function() {
+				// 	console.log("created")
+				// },
+				// beforeMount: function() {
+				// 	console.log("beforeMount")
+				// },
+				// mounted: function() {
+				// 	console.log("mounted")
+				// },
+				// beforeUpdate: function() {
+				// 	console.log("beforeUpdate")
+				// },
+				// updated: function() {
+				// 	console.log("updated")
+				// }
+			});
+
+			// watch 放在变量变化之前
+			// vm.$watch('sayHi', function(newVal, oldVal) {
+			// 	console.log(newVal, oldVal)
+			// })
+
+			// $ 便于与用户定义的属性进行区分
+
+			// myData.sayHi = "Hello"
+			vm.$data.sayHi = "啦啦啦"
+			vm.sayHi = "哦哦哦"
+		</script>
+
+	</body>
+</html>
